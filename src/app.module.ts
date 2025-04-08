@@ -5,6 +5,10 @@ import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from './auth/auth.guard';
+import { PostModule } from './post/post.module';
+import { PostService } from './post/post.service';
 
 @Module({
   imports: [
@@ -27,8 +31,17 @@ import { AppService } from './app.service';
         ssl: true,
       }),
     }),
+    AuthModule,
+    PostModule
   ],
   controllers: [AppController],
-  providers: [ConfigService, JwtService, AppService],
+  providers: [
+    ConfigService, JwtService, 
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
+    },
+    AppService
+  ],
 })
 export class AppModule {}
